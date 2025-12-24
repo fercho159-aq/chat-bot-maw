@@ -26,7 +26,7 @@ app.get('/api/sessions', async (req, res) => {
       SELECT DISTINCT session_id, 
              COUNT(*) as message_count,
              MIN(id) as first_message_id
-      FROM chat_memory 
+      FROM n8n_chat_histories 
       GROUP BY session_id 
       ORDER BY first_message_id DESC
     `);
@@ -42,7 +42,7 @@ app.get('/api/messages/:sessionId', async (req, res) => {
     try {
         const { sessionId } = req.params;
         const result = await pool.query(
-            'SELECT id, session_id, message FROM chat_memory WHERE session_id = $1 ORDER BY id ASC',
+            'SELECT id, session_id, message FROM n8n_chat_histories WHERE session_id = $1 ORDER BY id ASC',
             [sessionId]
         );
         res.json(result.rows);
@@ -56,7 +56,7 @@ app.get('/api/messages/:sessionId', async (req, res) => {
 app.get('/api/messages', async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT id, session_id, message FROM chat_memory ORDER BY id ASC'
+            'SELECT id, session_id, message FROM n8n_chat_histories ORDER BY id ASC'
         );
         res.json(result.rows);
     } catch (error) {
